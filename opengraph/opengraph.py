@@ -69,7 +69,7 @@ class OpenGraph(dict):
             doc = BeautifulSoup(html)
         else:
             doc = html
-        ogs = doc.html.head.findAll(property=re.compile(r'^og'))
+        ogs = doc.html.head.findAll(property=re.compile(r'^og:'))
         for og in ogs:
             if og.has_attr(u'content'):
                 self[og[u'property'][3:]]=og[u'content']
