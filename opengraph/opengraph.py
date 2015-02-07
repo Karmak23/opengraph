@@ -47,7 +47,7 @@ class OpenGraph(dict):
             self.fetch(url)
 
         if html is not None:
-            self.parser(html)
+            self.parse(html)
 
     def __setattr__(self, name, val):
         self[name] = val
@@ -60,9 +60,9 @@ class OpenGraph(dict):
         """
         raw = urllib2.urlopen(url)
         html = raw.read()
-        return self.parser(html)
-    def parser(self, html):
+        return self.parse(html)
 
+    def parse(self, html):
         """
         """
         if not isinstance(html, BeautifulSoup):
