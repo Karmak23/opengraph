@@ -115,10 +115,10 @@ class OpenGraph(dict):
     def to_json(self):
         # TODO: force unicode
         if json is None:
-            return "{'error':'there isn't json module'}"
+            return "{'error': 'there isn't json module'}"
 
         if not self.is_valid():
-            return json.dumps({'error':'og metadata is not valid'})
+            return json.dumps({'error': u'invalid OG metadata'})
 
         return json.dumps(self)
 
