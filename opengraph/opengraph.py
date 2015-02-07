@@ -18,7 +18,11 @@ except ImportError:
 class OpenGraph(dict):
     """ Turn OpenGraph metadata into a python dict-like. """
 
-    required_attrs = ['title', 'type', 'image', 'url', 'description']
+    required_attrs = ['title', 'type', 'image', 'url', ]
+    optional_attrs = [
+        'audio', 'determiner', 'description', 'locale',
+        'locale:alternate', 'site_name', 'video',
+    ]
 
     def __init__(self, url=None, html=None, scrape=False, **kwargs):
         """ Init OpenGraph instance.
