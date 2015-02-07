@@ -7,12 +7,10 @@ try:
 except ImportError:
     from BeautifulSoup import BeautifulSoup
 
-global import_json
 try:
     import json
-    import_json = True
 except ImportError:
-    import_json = False
+    json = None
 
 
 class OpenGraph(dict):
@@ -115,8 +113,7 @@ class OpenGraph(dict):
 
     def to_json(self):
         # TODO: force unicode
-        global import_json
-        if not import_json:
+        if json is None:
             return "{'error':'there isn't json module'}"
 
         if not self.is_valid():
