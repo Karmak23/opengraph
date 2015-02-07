@@ -24,6 +24,16 @@ class OpenGraph(dict):
         'audio', 'determiner', 'description', 'locale',
         'locale:alternate', 'site_name', 'video',
     ]
+    types_attrs = {
+        # TODO: please implement video.*, music.*
+        'article': [
+            'published_time', 'modified_time', 'expiration_time',
+            'author', 'section', 'tag'
+        ],
+        'book': ['author', 'isbn', 'release_date', 'tag', ],
+        'profile': ['first_name', 'last_name', 'username', 'gender', ],
+        'website': [],
+    }
 
     def __init__(self, url=None, html=None, scrape=False, **kwargs):
         """ Init OpenGraph instance.
