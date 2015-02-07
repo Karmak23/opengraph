@@ -72,7 +72,21 @@ class OpenGraph(dict):
         ogs = doc.html.head.findAll(property=re.compile(r'^og:'))
         for og in ogs:
             if og.has_attr(u'content'):
-                self[og[u'property'][3:]]=og[u'content']
+                property_name = og[u'property'][3:]
+
+                if property_name in self:
+                    # The spec defines arrays now and them. Mutate our
+                    # values to lists() in case we encounter another OG
+                    # property with an already known name.
+
+                    if type(self[property_name]) != type(list):
+                        self[property_name] = [self[property_name]]
+
+                    self[property_name].append(og[u'content'])
+
+                else:
+                    self[property_name] = og[u'content']
+
         # Couldn't fetch all attrs from og tags, try scraping body
         if not self.is_valid() and self.scrape:
             for attr in self.required_attrs:
