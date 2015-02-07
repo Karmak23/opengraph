@@ -125,8 +125,10 @@ class OpenGraph(dict):
         pass
 
     def scrape_image(self, doc):
-        images = [dict(img.attrs)['src']
-            for img in doc.html.body.findAll('img')]
+        images = [
+            dict(img.attrs)['src']
+            for img in doc.html.body.findAll('img')
+        ]
 
         if images:
             return images[0]
@@ -143,6 +145,6 @@ class OpenGraph(dict):
         return self._url
 
     def scrape_description(self, doc):
-        tag = doc.html.head.findAll('meta', attrs={"name":"description"})
-        result = "".join([t['content'] for t in tag])
+        tag = doc.html.head.findAll('meta', attrs={'name': 'description'})
+        result = u''.join([t['content'] for t in tag])
         return result

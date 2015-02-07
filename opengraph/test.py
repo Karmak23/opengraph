@@ -16,35 +16,36 @@ HTML = """
 </html>
 """
 
+
 class test(unittest.TestCase):
-		
+
     def test_url(self):
         data = opengraph.OpenGraph(url='http://vimeo.com/896837')
         self.assertEqual(data['url'], 'http://vimeo.com/896837')
-        
+
     def test_isinstace(self):
         data = opengraph.OpenGraph()
-        self.assertTrue(isinstance(data,dict))
-        
+        self.assertTrue(isinstance(data, dict))
+
     def test_to_html(self):
         og = opengraph.OpenGraph(html=HTML)
         self.assertTrue(og.to_html())
 
     def test_to_json(self):
-        og = opengraph.OpenGraph(url='http://www.youtube.com/watch?v=XAyNT2bTFuI')
+        og = opengraph.OpenGraph(
+            url='http://www.youtube.com/watch?v=XAyNT2bTFuI')
         self.assertTrue(og.to_json())
-        self.assertTrue(isinstance(og.to_json(),str))
+        self.assertTrue(isinstance(og.to_json(), str))
 
     def test_no_json(self):
         opengraph.json = None
         og = opengraph.OpenGraph(url='http://grooveshark.com')
-        self.assertEqual(og.to_json(),"{'error':'there isn't json module'}")
-        
+        self.assertEqual(og.to_json(), "{'error':'there isn't json module'}")
+
     def test_is_valid(self):
         og = opengraph.OpenGraph(url='http://grooveshark.com')
         self.assertTrue(og.is_valid())
 
 
-
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()
