@@ -1,4 +1,5 @@
 # encoding: utf-8
+u""" Extract OpenGraph entities from an HTML document. """
 
 import re
 import urllib2
@@ -9,11 +10,13 @@ except ImportError:
 
 try:
     import json
+
 except ImportError:
     json = None
 
 
 class OpenGraph(dict):
+
     """ Turn OpenGraph metadata into a python dict-like. """
 
     required_attrs = ['title', 'type', 'image', 'url', ]
@@ -48,16 +51,21 @@ class OpenGraph(dict):
             self.parse(html)
 
     def __setattr__(self, name, val):
+        """ Make our dict compatible with a standard object (AMAP). """
+
         self[name] = val
 
     def __getattr__(self, name):
+        """ Make our dict compatible with a standard object (AMAP). """
+
         return self[name]
 
     def fetch(self, url):
-        """
-        """
+        """ Download URL from the internet and return it already parsed. """
+
         raw = urllib2.urlopen(url)
         html = raw.read()
+
         return self.parse(html)
 
     def parse(self, html):
@@ -95,9 +103,11 @@ class OpenGraph(dict):
                         pass
 
     def valid_attr(self, attr):
+
         return hasattr(self, attr) and len(self[attr]) > 0
 
     def is_valid(self):
+
         return all([self.valid_attr(attr) for attr in self.required_attrs])
 
     def to_html(self):
@@ -123,6 +133,7 @@ class OpenGraph(dict):
         return json.dumps(self)
 
     def to_xml(self):
+
         pass
 
     def scrape_image(self, doc):
@@ -137,15 +148,20 @@ class OpenGraph(dict):
         return u''
 
     def scrape_title(self, doc):
+
         return doc.html.head.title.text
 
     def scrape_type(self, doc):
-        return 'other'
+
+        return u'other'
 
     def scrape_url(self, doc):
+
         return self._url
 
     def scrape_description(self, doc):
+
         tag = doc.html.head.findAll('meta', attrs={'name': 'description'})
         result = u''.join([t['content'] for t in tag])
+
         return result
