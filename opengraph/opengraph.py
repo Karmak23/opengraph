@@ -101,13 +101,14 @@ class OpenGraph(dict):
         return all([self.valid_attr(attr) for attr in self.required_attrs])
 
     def to_html(self):
-        if not self.is_valid():
-            return u"<meta property=\"og:error\" content=\"og metadata is not valid\" />"
 
-        meta = u""
-        for key,value in self.iteritems():
-            meta += u"\n<meta property=\"og:%s\" content=\"%s\" />" %(key, value)
-        meta += u"\n"
+        if not self.is_valid():
+            return u'<meta property="og:error" content="invalid OG metadata" />'
+
+        meta = u'\n'.join(
+            u'<meta property="og:{0}" content="%s" />'.format(key, value)
+            for key, value in self.iteritems()
+        ) + u'\n'
 
         return meta
 
