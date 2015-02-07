@@ -78,37 +78,80 @@ class OpenGraph(dict):
 
         return self.parse(html)
 
+    def __store_og_entity(self, og_entity):
+        """ Store an OG data if it is correct.
+
+        This [internal] method takes care of arrays to some extends. It
+        won't handle correctly complex cases like the 3-images examples
+        at http://ogp.me/#array
+        """
+
+        if og_entity.has_attr(u'content'):
+            property_name = og_entity[u'property'][3:]
+
+            if property_name in self:
+                # The spec defines arrays now and them. Mutate our
+                # values to lists() in case we encounter another OG
+                # property with an already known name.
+
+                if type(self[property_name]) != type(list):
+                    self[property_name] = [self[property_name]]
+
+                self[property_name].append(og_entity[u'content'])
+
+            else:
+                self[property_name] = og_entity[u'content']
+
+    def __search_for_entities(self, entity_prefix, doc):
+
+        og_entities = doc.html.head.findAll(
+            property=re.compile(r'^{0}:'.format(entity_prefix)))
+
+        for og_entity in og_entities:
+            self.store_og_data(og_entity)
+
     def parse(self, html):
-        """
-        """
-        if not isinstance(html, BeautifulSoup):
-            doc = BeautifulSoup(html)
-        else:
+        """ Parse the HTML, looking for all OG tags and store them. """
+
+        if isinstance(html, BeautifulSoup):
             doc = html
-        ogs = doc.html.head.findAll(property=re.compile(r'^og:'))
-        for og in ogs:
-            if og.has_attr(u'content'):
-                property_name = og[u'property'][3:]
 
-                if property_name in self:
-                    # The spec defines arrays now and them. Mutate our
-                    # values to lists() in case we encounter another OG
-                    # property with an already known name.
+        else:
+            doc = BeautifulSoup(html)
 
-                    if type(self[property_name]) != type(list):
-                        self[property_name] = [self[property_name]]
+        self.__search_for_entities('og', doc)
 
-                    self[property_name].append(og[u'content'])
+        self.__parse_type_specifics(doc)
 
-                else:
-                    self[property_name] = og[u'content']
+        self.scrape_if_needed(doc)
+
+    def __parse_type_specifics(self, doc):
+        """ Look for the sub-entities of each known OG type. """
+
+        try:
+            # This one will give us more tags to look for.
+            og_type = self['og:type']
+
+        except KeyError:
+            # No type declared / found. The document is invalid.
+            return
+
+        if og_type not in self.types_attrs:
+            # currently unknown type.
+            return
+
+        self.__search_for_entities(og_type, doc)
+
+    def scrape_if_needed(self, doc):
 
         # Couldn't fetch all attrs from og tags, try scraping body
         if not self.is_valid() and self.scrape:
             for attr in self.required_attrs:
                 if not self.valid_attr(attr):
+
                     try:
                         self[attr] = getattr(self, 'scrape_%s' % attr)(doc)
+
                     except AttributeError:
                         pass
 
