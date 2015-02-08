@@ -110,7 +110,7 @@ class OpenGraph(dict):
                 # values to lists() in case we encounter another OG
                 # property with an already known name.
 
-                if type(self[property_name]) != type(list):
+                if not isinstance(self[property_name], list):
                     self[property_name] = [self[property_name]]
 
                 self[property_name].append(unicode(og_entity[u'content']))
