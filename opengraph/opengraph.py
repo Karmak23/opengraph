@@ -87,7 +87,7 @@ class OpenGraph(dict):
 
         return self.parse(html)
 
-    def __store_og_entity(self, og_entity):
+    def __store_og_entity(self, og_entity, strip_prefix=True):
         """ Store an OG data if it is correct.
 
         This [internal] method takes care of arrays to some extends. It
@@ -96,7 +96,14 @@ class OpenGraph(dict):
         """
 
         if og_entity.has_attr(u'content'):
-            property_name = og_entity[u'property'][3:]
+            if strip_prefix:
+                # strip leading 'og:'
+                property_name = og_entity[u'property'][3:]
+
+            else:
+                # make "article:publish_time" become "article__publish_time"
+                # which is less cool, a little pythonic and very Djangoesque.
+                property_name = og_entity[u'property'].replace(u':', '__')
 
             if property_name in self:
                 # The spec defines arrays now and them. Mutate our
@@ -113,11 +120,20 @@ class OpenGraph(dict):
 
     def __search_for_entities(self, entity_prefix, doc):
 
+        # LOGGER.info(u'search "%s:"', entity_prefix)
+
         og_entities = doc.html.head.findAll(
             property=re.compile(r'^{0}:'.format(entity_prefix)))
 
+        strip_prefix = entity_prefix == u'og'
+
         for og_entity in og_entities:
-            self.__store_og_entity(og_entity)
+            # LOGGER.info(u'found %s', og_entity)
+
+            self.__store_og_entity(og_entity, strip_prefix=strip_prefix)
+
+        # LOGGER.info(u'stored now: %s', u', '.join(
+        #             u'{0}: {1}'.format(k, v) for k, v in self.iteritems()))
 
     def parse(self, html):
         """ Parse the HTML, looking for all OG tags and store them. """
