@@ -113,10 +113,10 @@ class OpenGraph(dict):
                 if type(self[property_name]) != type(list):
                     self[property_name] = [self[property_name]]
 
-                self[property_name].append(og_entity[u'content'])
+                self[property_name].append(unicode(og_entity[u'content']))
 
             else:
-                self[property_name] = og_entity[u'content']
+                self[property_name] = unicode(og_entity[u'content'])
 
     def __search_for_entities(self, entity_prefix, doc):
 
