@@ -153,9 +153,11 @@ class OpenGraph(dict):
     def __parse_type_specifics(self, doc):
         """ Look for the sub-entities of each known OG type. """
 
+        # LOGGER.info(u'keys: %s', self.keys())
+
         try:
             # This one will give us more tags to look for.
-            og_type = self['og:type']
+            og_type = self['type']
 
         except KeyError:
             # No type declared / found. The document is invalid.
