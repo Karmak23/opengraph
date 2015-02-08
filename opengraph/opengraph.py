@@ -62,8 +62,12 @@ class OpenGraph(dict):
         if url is not None:
             self.fetch(url)
 
-        if html is not None:
+        elif html is not None:
             self.parse(html)
+
+        else:
+            raise RuntimeError(
+                u'Either url or html must be passed as argument.')
 
     def __setattr__(self, name, val):
         """ Make our dict compatible with a standard object (AMAP). """
