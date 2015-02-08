@@ -3,8 +3,11 @@ u""" Extract OpenGraph entities from an HTML document. """
 
 import re
 import urllib2
+import logging
+
 try:
     from bs4 import BeautifulSoup
+
 except ImportError:
     from BeautifulSoup import BeautifulSoup
 
@@ -13,6 +16,8 @@ try:
 
 except ImportError:
     json = None
+
+LOGGER = logging.getLogger(__name__)
 
 
 class OpenGraph(dict):
