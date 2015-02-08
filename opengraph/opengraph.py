@@ -108,7 +108,7 @@ class OpenGraph(dict):
             property=re.compile(r'^{0}:'.format(entity_prefix)))
 
         for og_entity in og_entities:
-            self.store_og_data(og_entity)
+            self.__store_og_entity(og_entity)
 
     def parse(self, html):
         """ Parse the HTML, looking for all OG tags and store them. """
