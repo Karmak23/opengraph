@@ -163,6 +163,19 @@ class OpenGraph(dict):
             # No type declared / found. The document is invalid.
             return
 
+        if isinstance(og_type, list):
+            # This should not happen, and is a remote website programming error.
+            # Seen on http://www.videos-football.com/video-951219-060210-sylvain-marveaux-4-rennes-bordeaux-4-2.html  # NOQA
+            # And at least one more I cannot remember.
+            #
+            # We take the first encountered and hope it will be OK.
+            #
+            # TODO: compare them all, silently continue if all are equal,
+            #       else raise an exception if they differ, and if the spec
+            #       tells there should be only one per page. Else, we are
+            #       in desperate need of a more clever implementation.
+            self['type'] = og_type = og_type[0]
+
         if og_type not in self.types_attrs:
             # currently unknown type.
             return
